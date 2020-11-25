@@ -3,6 +3,8 @@
 #include <fstream>
 using namespace std;
 
+// Mapping logical address to the physical address for x86 arch
+
 // Paging: Logical address in x86 (Long Mode)
 // 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
 //    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
@@ -88,8 +90,8 @@ inline void map_addr(uint64_t const logical_addr, uint64_t table_base_address,
 }
 
 int main() {
-  auto in = ifstream("/Users/andrey.mikhalev/Documents/cpp/dataset_44327_15.txt", ios::in);
-  auto out = ofstream("/Users/andrey.mikhalev/Documents/cpp/out_44327_15.txt", ios::out | ios::binary);
+  auto in = ifstream("dataset_44327_15.txt", ios::in);
+  auto out = ofstream("out_44327_15.txt", ios::out | ios::binary);
 
   if (in.is_open() && out.is_open()) {
     uint64_t table_size = 0, query_count = 0, root_address = 0;
