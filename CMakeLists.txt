@@ -7,4 +7,5 @@ set(CMAKE_CXX_STANDARD 14)
 add_executable(OS main.cpp
     priority_boost_win.cpp
     robin_round.cpp
-    thread_synchronization.cpp)
+    thread_synchronization.cpp
+    mapping_vAddr_to_phAddr_x86.cpp)

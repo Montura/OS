@@ -26,15 +26,15 @@ void dumpThreadId() {
   printf("Current thread id: %lld\n", threadId());
 }
 
-void testDumpingThID() {
-  printf("Thread sync test started\n");
+void testDumpingThId() {
+  printf("---------- Start dumping thread id test ----------\n");
   std::thread th0(&dumpThreadId);
   std::thread th1(&dumpThreadId);
 
   th0.join();
   th1.join();
 
-  printf("Thread sync test  finished \n");
+  printf("---------- End dumping thread id test ----------\n");
 }
 
 // Alternation

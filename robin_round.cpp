@@ -7,8 +7,6 @@ uint64_t m_timeslice = 0;
 uint64_t m_time = 0;
 std::queue<int> thread_pool;
 
-void test(int timeslice);
-
 /**
  * Функция будет вызвана перед каждым тестом, если вы
  * используете глобальные и/или статические переменные
@@ -118,15 +116,8 @@ int current_thread() {
 
 using namespace std;
 
-int main() {
-  cout << "\nSLICE 4 \n";
-  test(4);
-  cout << "\nSLICE 10 \n";
-  test(10);
-
-}
-
-void test(int timeslice) {
+static void test(int timeslice) {
+  printf("Start test for RoundRobin algorithm\n");
   scheduler_setup(timeslice);
 
   new_thread(1);
@@ -177,4 +168,13 @@ void test(int timeslice) {
     timer_tick();
     cout << "current thread: " << current_thread() << endl;
   }
+}
+
+void testRoundRobin() {
+  printf("---------- Start RoundRobin algorithm test ----------\n");
+  cout << "TimeSlice is 4\n";
+  test(4);
+  cout << "\nTimeSlice is 10 \n";
+  test(10);
+  printf("---------- End RoundRobin algorithm test ----------\n");
 }
