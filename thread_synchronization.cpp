@@ -40,28 +40,29 @@ void testDumpingThId() {
 
 // Alternation
 namespace Alternation {
+// "victim" - a thread that has to be waiting for others
 // We have 2 threads: th_0 = 0, thId_1 = 1;
 // + Has mutual exclusion - true
 // - Has thread liveness - false
 //   Ex:
 //      1) Assume that th_1 never tries to lock a mutex.
 //      2) So, after th_0 go to the infinite cycle in the first lock attempt:
-//         threadId() == 0 and so (&lock->last == 0) is always true!
+//         threadId() == 0 and so (&lock->victim == 0) is always true!
 
   struct Mutex {
-    std::atomic<ThID> last;
+    std::atomic<ThID> victim;
   };
 
   void lock_init(Mutex *lock) {
-    lock->last.store(0ULL);
+    lock->victim.store(0ULL);
   }
 
   void lock(struct Mutex *lock) {
-    while (lock->last.load() == threadId());
+    while (lock->victim.load() == threadId());
   }
 
   void unlock(struct Mutex *lock) {
-    lock->last.store(threadId());
+    lock->victim.store(threadId());
   }
 }
 
@@ -105,12 +106,12 @@ namespace Peterson2Threads {
 // + Has thread liveness - true
 
   struct Mutex {
-    std::atomic<ThID> last;
+    std::atomic<ThID> victim;
     std::array<std::atomic<ThID>, 2> flag;
   };
 
   void lock_init(Mutex *lock) {
-    lock->last.store( 0ULL);
+    lock->victim.store(0ULL);
     lock->flag[0].store(0ULL);
     lock->flag[1].store( 0ULL);
   }
@@ -121,9 +122,9 @@ namespace Peterson2Threads {
 
     // The order is important!
     lock->flag[me].store( 1ULL);
-    lock->last.store(me);
+    lock->victim.store(me);
 
-    while (lock->flag[other].load() && (lock->last.load() == me));
+    while (lock->flag[other].load() && (lock->victim.load() == me));
   }
 
   void unlock(struct Mutex *lock) {
@@ -132,16 +133,16 @@ namespace Peterson2Threads {
   }
 
   //  Wrong order of instructions
-  //    1.lock->last, me);
+  //    1.lock->victim, me);
   //    2. lock->flag[me], 1);
   //  Ex:
-  //  1. th0 and th1 pass atomic_store(&lock->last, me);
+  //  1. th0 and th1 pass atomic_store(&lock->victim, me);
   //  2. th1 got to sleep, th0 is working
   //  3. th0: atomic_store(&lock->flag[0], 1); #### flags[0] = 1, flags[1] = 0
-  //  4. th0: (atomic_load(&lock->flag[1]) && atomic_load(&lock->last) == 0) is false, so th0 goes to the critical section
-  //  5. th1 is awake after th0 passes atomic_store(&lock->last, me)  !!!!
-  //  6. lock->last is 0 !!!!
-  //  7. th1: (atomic_load(&lock->flag[0]) && atomic_load(&lock->last) == 1) is false, so th1 also goes to the critical section
+  //  4. th0: (atomic_load(&lock->flag[1]) && atomic_load(&lock->victim) == 0) is false, so th0 goes to the critical section
+  //  5. th1 is awake after th0 passes atomic_store(&lock->victim, me)  !!!!
+  //  6. lock->victim is 0 !!!!
+  //  7. th1: (atomic_load(&lock->flag[0]) && atomic_load(&lock->victim) == 1) is false, so th1 also goes to the critical section
   //  8. th0 and th1 are inside the critical section!
 }
 
@@ -164,7 +165,7 @@ namespace PetersonGreedy {
 // Step 1. Introduce new struct LockOne with N flags.
 // LockOne is used in lock_one function to start a competition between many threads
   struct LockOne {
-    std::atomic<ThID> last;
+    std::atomic<ThID> victim;
     std::array<std::atomic<ThID>, N> flags;
   };
 
@@ -186,9 +187,9 @@ namespace PetersonGreedy {
     const ThID me = threadId();
 
     lock->flags[me].store(1);
-    lock->last.store(me);
+    lock->victim.store(me);
 
-    while (!flags_clear(lock) && (lock->last.load() == me));
+    while (!flags_clear(lock) && (lock->victim.load() == me));
   }
 
   void unlock_one(LockOne *lock) {
@@ -231,15 +232,13 @@ namespace OptimizedPeterson {
   constexpr int N = 10;
 
   struct Mutex {
-    std::array<std::atomic<ThID>, N> levels; // the length of the 1's prefix|postfix (1111 ... 000 or 000....11111)
-    std::array<std::atomic<ThID>, N - 1> last;
+    std::array<std::atomic<ThID>, N> level; // the length of the 1's prefix|postfix (1111 ... 000 or 000....11111)
+    std::array<std::atomic<ThID>, N - 1> victim;
   };
 
-  bool flags_clear(Mutex* lock, int level) {
-    const ThID me = threadId();
-
+  bool flags_clear(Mutex* lock, ThID me, int level) {
     for (int i = 0; i < N; ++i) {
-      if (i != me && (lock->levels[i].load() == level)) {
+      if (i != me && (lock->level[i].load() == level)) {
         return false;
       }
     }
@@ -251,15 +250,17 @@ namespace OptimizedPeterson {
     const ThID me = threadId();
 
     for (int level = 0; level < N - 1; ++level) {
-      lock->levels[me].store(level + 1);
-      lock->last[level].store(me);
+      lock->level[me].store(level + 1);
+      lock->victim[level].store(me);
 
-      while (!flags_clear(lock, level) && (lock->last[level].load() == me));
+      // To pass to the next level we compete with all other threads
+      // (exist i: i != me) and (level[i] >= level) and victim[level] == me
+      while (!flags_clear(lock, me, level) && (lock->victim[level].load() == me));
     }
   }
 
   void unlock(Mutex* lock) {
     const ThID me = threadId();
-    lock->levels[me].store(0ULL);
+    lock->level[me].store(0ULL);
   }
 }
