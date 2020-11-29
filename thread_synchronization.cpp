@@ -17,7 +17,7 @@ typedef uint64_t ThID;
 #else
   #include <pthread.h>
 
-  thID threadId() {
+  ThID threadId() {
     return reinterpret_cast<uint64_t>(pthread_self());
   }
 #endif
@@ -52,7 +52,7 @@ namespace Alternation {
   };
 
   void lock_init(Mutex *lock) {
-    std::atomic_store(&lock->last, 0);
+    std::atomic_store(&lock->last, 0ULL);
   }
 
   void lock(struct Mutex *lock) {
@@ -79,21 +79,21 @@ namespace IntentionFlags {
   };
 
   void lock_init(Mutex *lock) {
-    std::atomic_store(&lock->flag[0], 0);
-    std::atomic_store(&lock->flag[1], 0);
+    std::atomic_store(&lock->flag[0], 0ULL);
+    std::atomic_store(&lock->flag[1], 0ULL);
   }
 
   void lock(struct Mutex *lock) {
     const ThID me = threadId();
     const ThID other = 1 - threadId();
 
-    std::atomic_store(&lock->flag[me], 1);
+    std::atomic_store(&lock->flag[me], 1ULL);
     while (std::atomic_load(&lock->flag[other]));
   }
 
   void unlock(struct Mutex *lock) {
     const ThID me = threadId();
-    std::atomic_store(&lock->flag[me], 0);
+    std::atomic_store(&lock->flag[me], 0ULL);
   }
 }
 
@@ -109,9 +109,9 @@ namespace Peterson {
   };
 
   void lock_init(Mutex *lock) {
-    std::atomic_store(&lock->last, 0);
-    std::atomic_store(&lock->flag[0], 0);
-    std::atomic_store(&lock->flag[1], 0);
+    std::atomic_store(&lock->last, 0ULL);
+    std::atomic_store(&lock->flag[0], 0ULL);
+    std::atomic_store(&lock->flag[1], 0ULL);
   }
 
   void lock(struct Mutex *lock) {
@@ -119,7 +119,7 @@ namespace Peterson {
     const ThID other = 1 - threadId();
 
     // The order is important!
-    std::atomic_store(&lock->flag[me], 1);
+    std::atomic_store(&lock->flag[me], 1ULL);
     std::atomic_store(&lock->last, me);
 
     while (std::atomic_load(&lock->flag[other]) && std::atomic_load(&lock->last) == me);
@@ -127,7 +127,7 @@ namespace Peterson {
 
   void unlock(struct Mutex *lock) {
     const ThID me = threadId();
-    std::atomic_store(&lock->flag[me], 0);
+    std::atomic_store(&lock->flag[me], 0ULL);
   }
 
   //  Wrong order of instructions
