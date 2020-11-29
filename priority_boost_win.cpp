@@ -23,7 +23,7 @@ namespace {
 
 typedef void* TheadHandle;
 
-int main() {
+int testPriorityBoost() {
   std::cout << "Main started\n";
 
   std::thread th0(&thread0);
