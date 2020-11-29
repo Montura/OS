@@ -1,6 +1,3 @@
-#include <windows.h>
-#include <processthreadsapi.h>
-#include <thread>
 #include <chrono>
 #include <iostream>
 
@@ -19,6 +16,10 @@ namespace {
     }
   }
 }
+
+#ifdef _WINDOWS
+#include <thread>
+#include <windows.h>
 
 typedef void* TheadHandle;
 
@@ -44,3 +45,4 @@ int main() {
   std::cout << "Main finished \n";
   return 0;
 };
+#endif
