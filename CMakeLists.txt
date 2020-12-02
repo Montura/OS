@@ -9,4 +9,5 @@ add_executable(OS main.cpp
     robin_round.cpp
     thread_synchronization.cpp
     mapping_vAddr_to_phAddr_x86.cpp
-    rmw_register.cpp)
+    rmw_register.cpp
+    rwm_locks.cpp)

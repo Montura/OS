@@ -81,20 +81,3 @@ bool atomic_compare_exchange(std::atomic_int *x, int *expected_value, int new_va
 
   return true;
 }
-
-namespace rmw_lock {
-  constexpr int LOCKED = 1;
-  constexpr int UNLOCKED = 0;
-
-  struct Mutex {
-    std::atomic<int> locked;
-  };
-
-  void lock(Mutex * lock) {
-    while (lock->locked.exchange(LOCKED) != UNLOCKED);
-  }
-
-  void unlock(Mutex * lock) {
-    lock->locked.store(UNLOCKED);
-  }
-}
