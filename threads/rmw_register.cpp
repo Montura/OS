@@ -7,7 +7,8 @@
    указывает x, и возвращает прочитанное значение. */
 int load_linked(std::atomic_int *x) {
   // By default there were no implementation!
-  // My implementation  
+  // My implementation
+  return x->load();
 }
 
 /* store_conditional сохраняет значение new_value в ячейку

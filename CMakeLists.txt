@@ -5,10 +5,12 @@ set(CMAKE_CXX_STANDARD 14)
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "..")
 
 add_executable(OS main.cpp
-    priority_boost_win.cpp
-    robin_round.cpp
-    thread_synchronization.cpp
+    threads/priority_boost_win.cpp
+    threads/rmw_register.cpp
+    threads/robin_round.cpp
+    threads/rwm_locks.cpp
+    threads/thread_synchronization.cpp
+    threads/read_write_lock.cpp
     mapping_vAddr_to_phAddr_x86.cpp
-    rmw_register.cpp
-    rwm_locks.cpp
-    read_elf.cpp)
+    read_elf.cpp
+)
