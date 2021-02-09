@@ -4,10 +4,10 @@
 
 #define ELF_NIDENT	16
 
-// program header-ы такого типа нужно загрузить в память при загрузке приложения
+// Program headers with type PT_LOAD must be loaded into the application memory during its loading
 #define PT_LOAD		1
 
-// Эта структура описывает формат заголовока ELF файла
+// ELF header
 struct elf_hdr {
   std::uint8_t e_ident[ELF_NIDENT];
   std::uint16_t e_type;
@@ -25,7 +25,7 @@ struct elf_hdr {
   std::uint16_t e_shstrndx;
 } __attribute__((packed));
 
-// структура записи в таблице program header-ов
+// ELF program header entry
 struct elf_phdr {
   std::uint32_t p_type;
   std::uint32_t p_flags;

@@ -1,7 +1,7 @@
-#include "test_list.h"
+#include "../include/test_list.h"
 
 int main() {
-//  testMapping();
+  testMapping();
   testRoundRobin();
   testDumpingThId();
 
