@@ -2,8 +2,7 @@
 
 Working on HW for the course "Operating System" (https://stepik.org/course/1780/info)
 
-### Mapping logical address to the physical address for x86 arch
-- #### See [mapping_vAddr_to_phAddr_x86](https://github.com/Montura/OS/blob/master/src/mapping_vAddr_to_phAddr_x86.cpp)
+### [Mapping logical address to the physical address for x86 arch](https://github.com/Montura/OS/blob/master/src/mapping_vAddr_to_phAddr_x86.cpp)
 
 #### Paging: Logical address in x86 (Long Mode)
 |64-bit address| | | | | | |
@@ -11,8 +10,7 @@ Working on HW for the course "Operating System" (https://stepik.org/course/1780/
 |Bits|63 ... 48|47 ... 39|38 ... 30|29 ... 21|20 ... 12|11 ... 0|
 |Values| [63:48] = 47 bit |    PLM4    |  DirectoryPtr   | Directory |  Table  |    Offset    |
 
-### Read ELF header:
-- #### See [read_elf](https://github.com/Montura/OS/blob/master/src/read_elf.cpp)
+### [Read ELF header](https://github.com/Montura/OS/blob/master/src/read_elf.cpp)
 1) To get the address of main entry point
 2) To get the size of memory required to load the program
 
