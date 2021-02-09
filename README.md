@@ -16,9 +16,6 @@ Working on HW for the course "Operating System" (https://stepik.org/course/1780/
 1) To get the address of main entry point
 2) To get the size of memory required to load the program
 
-### Read ELF header:
-- #### See [read_elf](https://github.com/Montura/OS/blob/master/src/read_elf.cpp)
-
 ### Thread experiments
 1. [Priority boost (Windows)](https://github.com/Montura/OS/blob/master/src/threads/priority_boost_win.cpp)
 2. [Robin round algorithm](https://github.com/Montura/OS/blob/master/src/threads/robin_round.cpp)
